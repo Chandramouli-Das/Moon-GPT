@@ -6,7 +6,7 @@ def start_backend():
     print("Starting FastAPI backend...")
     # Assuming the FastAPI app is in backend/main.py and the app instance is named "app"
     backend_proc = subprocess.Popen([
-        "uvicorn", "Backend.main:app", "--host", "0.0.0.0", "--port", "8080"
+        "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"
     ])
     return backend_proc
 
