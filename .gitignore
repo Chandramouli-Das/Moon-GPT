@@ -5,6 +5,11 @@ moon-gpt
 *.pyo
 *.pyd
 
+
+node_modules/
+.env
+__pycache__/
+*.log
 # Ignore virtual environment directories
 env/
 venv/
