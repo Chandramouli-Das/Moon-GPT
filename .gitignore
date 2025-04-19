@@ -1,0 +1,23 @@
+# Ignore Python caches and virtual environment folders
+__pycache__/
+moon-gpt
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment directories
+env/
+venv/
+Resume/lib/
+Resume/Lib/
+Resume/bin/
+
+# Ignore system-specific files
+.DS_Store
+
+# Ignore node_modules for the React frontend
+moon-gpt-frontend/node_modules/
+
+# If you have build outputs or logs, ignore them too
+moon-gpt-frontend/build/
+*.log

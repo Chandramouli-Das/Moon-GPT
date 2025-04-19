@@ -1,0 +1,130 @@
+/* src/App.css */
+
+/* Global styles */
+body {
+  background-color: #0e1117;
+  color: #FAFAFA;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Main layout: two columns (FAQ on left, chat on right) */
+.main-content {
+  display: flex;
+  height: 100vh;
+}
+
+/* Left side: FAQ panel */
+.faq-container {
+  width: 300px; /* Adjust as needed */
+  background-color: #161b22;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto; /* If FAQ list is long */
+}
+
+.faq-container h2 {
+  margin-top: 0;
+}
+
+.faq-item {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.faq-item:hover {
+  background-color: #2a2f37;
+}
+
+/* Right side: Chat section */
+.chat-section {
+  flex: 1; /* Fills remaining space */
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  position: relative;
+}
+
+.chat-section h1 {
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* Chat window with border */
+.chat-window {
+  flex: 1; /* fill vertical space */
+  border: 1px solid #333;
+  border-radius: 10px;
+  margin-bottom: 60px; /* leave space for the input form */
+  background-color: #161b22;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* The chat bubbles themselves are styled in Chat.css */
+
+/* Chat input pinned at the bottom */
+.chat-input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center; /* vertically center items */
+  gap: 10px;
+  background-color: #0e1117;
+  border-top: 1px solid #333;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.cv-button {
+  background-color: #505763;
+  border: none;
+  border-radius: 5px;
+  color: #fafafa;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 20px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.chat-input button {
+  padding: 10px 20px;
+  background-color: #505763;
+  border: none;
+  border-radius: 5px;
+  color: #fafafa;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Inline Spinner (small, beside the input or send button) */
+.spinner-inline {
+  width: 24px;
+  height: 24px;
+  border: 4px solid #ccc;
+  border-top-color: #1e90ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
