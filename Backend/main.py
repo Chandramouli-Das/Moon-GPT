@@ -91,7 +91,7 @@ EXTRA_INSTRUCTIONS = (
 )
 
 # Define the PDF CV file path (update as needed)
-pdf_cv_path = "/Users/chandramoulidas/Desktop/Resume/Backend/Resume.pdf"
+pdf_cv_path = "/Users/chandramoulidas/Desktop/Resume/backend/Resume.pdf"
 
 # Load the PDF text for context extraction if needed
 print("Loading PDF document...")
