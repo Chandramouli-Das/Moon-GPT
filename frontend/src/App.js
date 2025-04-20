@@ -27,7 +27,7 @@ function App() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/chat`,
+        "https://moon-gpt-backend.onrender.com/api/chat",
         { conversation: [{ role: "user", content: cvQuery }] },
         { responseType: "blob" }
       );
@@ -69,7 +69,7 @@ function App() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/chat`,
+        "https://moon-gpt-backend.onrender.com/api/chat",
         { conversation }
       );
       const reply = response.data.answer;
