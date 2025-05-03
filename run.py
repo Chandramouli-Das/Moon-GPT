@@ -8,7 +8,7 @@ import multiprocessing
 # === CONFIG ===
 FASTAPI_HOST = "127.0.0.1"
 FASTAPI_PORT = 8000
-STREAMLIT_PORT = 8501
+STREAMLIT_PORT = 8503
 STREAMLIT_APP = "streamlit_chat.py"
 
 # === Run FastAPI in a separate PROCESS (not thread)

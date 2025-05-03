@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import requests
 import streamlit as st
-
+'''
 # ───────────────────────────────────────────────
 # Page & config
 # ───────────────────────────────────────────────
@@ -12,7 +12,19 @@ with open("config.json", "r") as f:
     cfg = json.load(f)
 
 PDF_PATH   = Path(cfg.get("pdf_cv_path", "Resume.pdf"))
-BACKEND_URL = "http://localhost:8000/api/chat"
+'''
+
+BACKEND_URL = "https://moon-gpt.onrender.com/api/chat"
+
+import streamlit as st
+from pathlib import Path
+
+PDF_PATH    = Path(st.secrets["PDF_CV_PATH"])
+DOCX_PATH   = Path(st.secrets["DOCX_PATH"])
+BACKEND_URL = st.secrets["BACKEND_URL"]
+EMAIL_SENDER = st.secrets["EMAIL_SENDER"]
+EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
+EMAIL_RECEIVER = st.secrets["EMAIL_RECEIVER"]
 
 # ───────────────────────────────────────────────
 # Global CSS – darker text, card‑like chat, tidy lists
