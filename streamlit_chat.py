@@ -2,17 +2,17 @@ import json
 from pathlib import Path
 import requests
 import streamlit as st
-'''
+
 # ───────────────────────────────────────────────
 # Page & config
 # ───────────────────────────────────────────────
 st.set_page_config(page_title="MoonGPT", page_icon="🌕", layout="wide")
 
-with open("config.json", "r") as f:
-    cfg = json.load(f)
+#with open("config.json", "r") as f:
+#    cfg = json.load(f)
 
-PDF_PATH   = Path(cfg.get("pdf_cv_path", "Resume.pdf"))
-'''
+#DF_PATH   = Path(cfg.get("pdf_cv_path", "Resume.pdf"))
+
 
 BACKEND_URL = "https://moon-gpt.onrender.com/api/chat"
 
