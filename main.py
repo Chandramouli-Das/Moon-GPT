@@ -1,152 +1,140 @@
-import os
+import json, os, re, smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 import openai
 import faiss
 import numpy as np
-from dotenv import load_dotenv
-from docx import Document  # (Keep this if you still use DOCX elsewhere)
+import docx  # pip install python-docx
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-import PyPDF2  # Make sure to install PyPDF2 if you haven't already
 
-# Load environment variables from .env file
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# === load config ===
+with open("config.json", "r") as f:
+    cfg = json.load(f)
 
+openai.api_key   = cfg.get("openai_api_key")
+DOCX_PATH        = cfg.get("docx_path",  "Document.docx")      # Word file used for RAG
+PDF_PATH         = cfg.get("pdf_cv_path", "Resume.pdf")        # just for download
+email_sender     = cfg.get("email_sender")
+email_password   = cfg.get("email_password")
+email_receiver   = cfg.get("email_receiver", "chandramoulidas39@gmail.com")
+
+# === fastapi app ===
 app = FastAPI()
-
-# Add CORS middleware to allow requests from any origin (adjust for production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change "*" to specific origins in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Define the request model, expecting a conversation (list of messages)
 class ChatRequest(BaseModel):
-    conversation: list
+    conversation: list  # list[{role, content}]
 
-# Function to extract text from a PDF file using PyPDF2
-def load_pdf(filename: str) -> str:
-    full_text = []
-    with open(filename, "rb") as f:
-        reader = PyPDF2.PdfReader(f)
-        for page in reader.pages:
-            text = page.extract_text()
-            if text:
-                full_text.append(text)
-    return "\n".join(full_text)
+# === helpers ===
 
-# Function to generate embeddings using OpenAI's embedding model
-def get_embedding(text: str) -> np.ndarray:
-    response = openai.Embedding.create(
-        input=text,
-        model="text-embedding-ada-002"
-    )
-    embedding = response["data"][0]["embedding"]
-    return np.array(embedding, dtype=np.float32)
+def load_docx(path: str) -> str:
+    """Return all paragraph text joined by newlines."""
+    doc = docx.Document(path)
+    return "\n".join(p.text for p in doc.paragraphs if p.text.strip())
 
-# Naively split text into chunks based on word count
-def chunk_text(text: str, max_tokens: int = 300) -> list:
-    words = text.split()
-    chunks = []
-    current_chunk = []
-    current_length = 0
-    for word in words:
-        current_chunk.append(word)
-        current_length += 1
-        if current_length >= max_tokens:
-            chunks.append(" ".join(current_chunk))
-            current_chunk = []
-            current_length = 0
-    if current_chunk:
-        chunks.append(" ".join(current_chunk))
-    return chunks
 
-# Build a FAISS index from a list of text chunks
-def build_faiss_index(chunks: list) -> (faiss.IndexFlatL2, list):
-    embeddings = [get_embedding(chunk) for chunk in chunks]
-    embeddings_np = np.vstack(embeddings)
-    dim = embeddings_np.shape[1]
-    index = faiss.IndexFlatL2(dim)
-    index.add(embeddings_np)
-    return index, chunks
+def get_embedding(txt: str) -> np.ndarray:
+    emb = openai.Embedding.create(model="text-embedding-ada-002", input=txt)
+    return np.array(emb["data"][0]["embedding"], dtype=np.float32)
 
-# Retrieve the top-k most similar chunks for a given query
-def retrieve(query: str, index, chunks, top_k: int = 3) -> list:
-    query_embedding = get_embedding(query)
-    query_embedding = np.array([query_embedding])
-    distances, indices = index.search(query_embedding, top_k)
-    retrieved_chunks = [chunks[i] for i in indices[0]]
-    return retrieved_chunks
 
-# Extra instructions for the system message
-EXTRA_INSTRUCTIONS = (
-    "You are an expert assistant providing detailed and accurate information "
-    "based solely on the provided document context. "
-    "Please answer concisely, using bullet points for lists, and if more detail is needed, end with 'Do you want to know more?'."
+def chunk(text: str, size: int = 300):
+    words, buf, out = text.split(), [], []
+    for w in words:
+        buf.append(w)
+        if len(buf) >= size:
+            out.append(" ".join(buf)); buf = []
+    if buf:
+        out.append(" ".join(buf))
+    return out
+
+
+def build_index(chunks):
+    mat = np.vstack([get_embedding(c) for c in chunks])
+    idx = faiss.IndexFlatL2(mat.shape[1]); idx.add(mat)
+    return idx, chunks
+
+
+def retrieve(q: str, idx, chunks, k: int = 3):
+    _, I = idx.search(np.array([get_embedding(q)]), k)
+    return [chunks[i] for i in I[0]]
+
+
+def send_email(subj: str, body: str):
+    msg = MIMEMultipart(); msg["From"], msg["To"], msg["Subject"] = email_sender, email_receiver, subj
+    msg.attach(MIMEText(body, "plain"))
+    s = smtplib.SMTP("smtp.gmail.com", 587); s.starttls(); s.login(email_sender, email_password)
+    s.sendmail(email_sender, email_receiver, msg.as_string()); s.quit()
+
+# === system prompt ===
+SYSTEM_PROMPT = (
+    "You are MoonGPT, Chandramouli Das's personal assistant. "
+    "Answer strictly using information from the provided resume context. "
+    "Use bullet points where appropriate. If more details are required finish with 'Do you want to know more?'."
 )
 
-# Define the PDF CV file path (update as needed)
-pdf_cv_path = "/Users/chandramoulidas/Desktop/Resume/Resume.pdf"
+# === build FAISS index once ===
+print("Indexing", DOCX_PATH)
+resume_text                = load_docx(DOCX_PATH)
+faiss_index, all_chunks    = build_index(chunk(resume_text))
+print("Index ready ✔")
 
-# Load the PDF text for context extraction if needed
-print("Loading PDF document...")
-document_text = load_pdf(pdf_cv_path)
-print("Processing document into chunks...")
-chunks = chunk_text(document_text, max_tokens=300)
-print("Building the retrieval index...")
-faiss_index, all_chunks = build_faiss_index(chunks)
-print("Index built successfully!")
+# === email draft buffer ===
+last_subj, last_body = "", ""
 
+# === endpoint ===
 @app.post("/api/chat")
-def chat_endpoint(request: ChatRequest):
-    # Copy the conversation from the request
-    conversation = request.conversation.copy()
+def chat(req: ChatRequest):
+    global last_subj, last_body
+    conv = req.conversation.copy()
 
-    # Identify the user's most recent query (search backwards)
-    user_query = None
-    for msg in reversed(conversation):
-        if msg.get("role") == "user":
-            user_query = msg.get("content", "")
-            break
+    user_query = next((m["content"] for m in reversed(conv) if m.get("role") == "user"), "")
+    uq = user_query.lower()
 
-    # Special case: If the user's query contains "cv" or "resume", return the PDF file directly.
-    if user_query and ("cv" in user_query.lower() or "resume" in user_query.lower()):
-        return FileResponse(
-            path=pdf_cv_path,
-            media_type="application/pdf",
-            filename="MyCV.pdf"
-        )
+    # resume download
+    if any(t in uq for t in ["cv", "resume"]):
+        return FileResponse(PDF_PATH, media_type="application/pdf", filename="Chandramouli_Das_Resume.pdf")
 
-    # Retrieve document context based on the latest user query
-    retrieved_context = []
-    if user_query:
-        retrieved_context = retrieve(user_query, faiss_index, all_chunks, top_k=3)
-    context_text = "\n\n".join(retrieved_context)
+    write_mail = ("mail" in uq or "email" in uq) and any(x in uq for x in ["write", "draft", "compose"])
+    confirm    = "ok send" in uq or ("send" in uq and any(x in uq for x in ["mail", "email", "it"]))
 
-    # Ensure conversation starts with a system message with instructions
-    if not conversation or conversation[0].get("role") != "system":
-        conversation.insert(0, {
-            "role": "system",
-            "content": EXTRA_INSTRUCTIONS
-        })
-    
-    # Insert a system message with the retrieved document context
-    conversation.insert(1, {
-        "role": "system",
-        "content": f"Relevant Document Context:\n{context_text}"
-    })
+    if write_mail:
+        conv.insert(1, {"role": "system", "content": "Write a professional email per user's request. Begin with 'Subject:' then the body."})
 
-    # Call the OpenAI ChatCompletion API with the full conversation
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",  # Adjust model name if necessary
-        messages=conversation,
-        temperature=0.7,
-        max_tokens=300
-    )
-    answer = response['choices'][0]['message']['content']
+    # prepend context
+    if not conv or conv[0].get("role") != "system":
+        conv.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
+    context = "\n\n".join(retrieve(uq, faiss_index, all_chunks)) if uq else ""
+    conv.insert(1, {"role": "system", "content": f"Resume Context:\n{context}"})
+
+    # get answer
+    answer = openai.ChatCompletion.create(model="gpt-4o-mini", messages=conv, temperature=0.7, max_tokens=300)["choices"][0]["message"]["content"]
+
+    # buffer draft
+    if write_mail:
+        subj, body = "", ""
+        for line in answer.splitlines():
+            if line.lower().startswith("subject:"):
+                subj = line.split(":",1)[1].strip()
+            else:
+                body += line + "\n"
+        sender = re.search(r"[\w\.-]+@[\w\.-]+\.\w+", user_query)
+        body += f"\n\n---\nSent by: {sender.group(0) if sender else 'Unknown'}"
+        last_subj, last_body = subj, body
+        answer += "\n\n📨 Draft saved — reply 'Ok send it' to email Chandramouli."
+
+    elif confirm and last_subj and last_body:
+        send_email(last_subj, last_body)
+        answer = "📩 Email sent successfully to Chandramouli!"
+
     return {"answer": answer}

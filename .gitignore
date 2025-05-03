@@ -54,3 +54,5 @@ moon-gpt-frontend/node_modules/
 # If you have build outputs or logs, ignore them too
 moon-gpt-frontend/build/
 *.log
+test.pyc
+config.json
