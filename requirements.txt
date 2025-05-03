@@ -1,7 +1,6 @@
+openai==0.28.0
 fastapi
 uvicorn
-openai
-streamlit
 faiss-cpu
 numpy
 python-docx
