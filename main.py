@@ -58,14 +58,13 @@ def get_embedding(txt: str) -> np.ndarray:
     resp = openai.Embedding.create(input=txt, model="text-embedding-ada-002")
     return np.array(resp["data"][0]["embedding"], dtype=np.float32)
 
-def chunk(text: str, size: int = 300):
-    words, buf, out = text.split(), [], []
-    for w in words:
-        buf.append(w)
-        if len(buf) >= size:
-            out.append(" ".join(buf)); buf = []
-    if buf:
-        out.append(" ".join(buf))
+def chunk(text: str, size: int = 500, overlap: int = 100):
+    words = text.split()
+    out = []
+    i = 0
+    while i < len(words):
+        out.append(" ".join(words[i:i + size]))
+        i += size - overlap
     return out
 
 def build_index(chunks):
