@@ -29,13 +29,12 @@ EMAIL_RECEIVER   = cfg["email_receiver"]
 load_dotenv()
 
 # === Config from ENV ===
-openai.api_key   = os.getenv("OPENAI_API_KEY")
-print("Loaded OpenAI API Key:", openai.api_key)
-PDF_PATH         = os.getenv("PDF_CV_PATH", "Resume.pdf")
-DOCX_PATH        = os.getenv("DOCX_PATH",  "Document.docx")
-EMAIL_SENDER     = os.getenv("EMAIL_SENDER")
-EMAIL_PASSWORD   = os.getenv("EMAIL_PASSWORD")
-EMAIL_RECEIVER   = os.getenv("EMAIL_RECEIVER", EMAIL_SENDER)
+openai.api_key   = os.getenv("openai_api_key")
+PDF_PATH         = os.getenv("pdf_cv_path", "Resume.pdf")
+DOCX_PATH        = os.getenv("docx_path",  "Document.docx")
+EMAIL_SENDER     = os.getenv("email_sender")
+EMAIL_PASSWORD   = os.getenv("email_password")
+EMAIL_RECEIVER   = os.getenv("email_receiver", EMAIL_SENDER)
 
 # === FastAPI setup ===
 app = FastAPI()
