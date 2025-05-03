@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 # === load config ===
+'''
 with open("config.json", "r") as f:
     cfg = json.load(f)
 
@@ -21,6 +22,16 @@ PDF_PATH         = cfg.get("pdf_cv_path", "Resume.pdf")        # just for downlo
 email_sender     = cfg.get("email_sender")
 email_password   = cfg.get("email_password")
 email_receiver   = cfg.get("email_receiver", "chandramoulidas39@gmail.com")
+'''
+
+# === Load from Environment ===
+openai.api_key = os.getenv("OPENAI_API_KEY")
+pdf_cv_path = "Resume.pdf"
+docx_path = "Document.docx"
+email_sender = os.getenv("EMAIL_SENDER")
+email_password = os.getenv("EMAIL_PASSWORD")
+email_receiver = os.getenv("EMAIL_RECEIVER")
+
 
 # === fastapi app ===
 app = FastAPI()
