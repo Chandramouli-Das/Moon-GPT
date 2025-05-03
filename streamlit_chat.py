@@ -55,7 +55,7 @@ st.markdown(
 # Sidebar
 # ───────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🌙 MoonGPT")
+    st.markdown("## 🌕 MoonGPT")
     st.markdown("<span style='font-size:0.9rem'>Your personal assistant for <b>Chandramouli Das</b></span>", unsafe_allow_html=True)
 
     # Resume button
@@ -89,13 +89,13 @@ st.title("🌕 MoonGPT")
 with st.container():
     st.markdown(
         "<div style='max-width:740px;font-size:0.95rem;'>"
-        "Chat with a résumé‑aware assistant powered by GPT. Ask about Chandramouli Das’s skills, experience & projects, or have it draft emails for you." 
+        "Chat with a Personal assistant powered by GPT. Ask about Chandramouli Das’s skills, experience & projects, or have it draft emails or appointments for you." 
         "</div>", unsafe_allow_html=True)
 
 # ───────────────────────────────────────────────
 # Session state
 # ───────────────────────────────────────────────
-st.session_state.setdefault("messages", [{"role":"assistant","content":"Hi! I'm MoonGPT. Ask me anything about Chandramouli Das or request a résumé/email."}])
+st.session_state.setdefault("messages", [{"role":"assistant","content":"Hi! I'm MoonGPT. Ask me anything about my Boss Chandramouli Das !"}])
 st.session_state.setdefault("queue", [])
 
 # helper to call backend
