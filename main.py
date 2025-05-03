@@ -10,27 +10,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
-# === load config ===
-'''
-with open("config.json", "r") as f:
-    cfg = json.load(f)
-
-openai.api_key   = cfg.get("openai_api_key")
-DOCX_PATH        = cfg.get("docx_path",  "Document.docx")      # Word file used for RAG
-PDF_PATH         = cfg.get("pdf_cv_path", "Resume.pdf")        # just for download
-email_sender     = cfg.get("email_sender")
-email_password   = cfg.get("email_password")
-email_receiver   = cfg.get("email_receiver", "chandramoulidas39@gmail.com")
-'''
+# === Load .env locally if available ===
+load_dotenv()
 
 # === Load from Environment ===
-openai.api_key = os.getenv("openai_api_key")
-pdf_cv_path = "Resume.pdf"
-docx_path = "Document.docx"
-email_sender = os.getenv("email_sender")
-email_password = os.getenv("email_password")
-email_receiver = os.getenv("email_receiver")
+openai.api_key = os.getenv("OPENAI_API_KEY")
+PDF_PATH       = os.getenv("PDF_CV_PATH", "Resume.pdf")
+DOCX_PATH      = os.getenv("DOCX_PATH", "Document.docx")
+email_sender   = os.getenv("EMAIL_SENDER")
+email_password = os.getenv("EMAIL_PASSWORD")
+email_receiver = os.getenv("EMAIL_RECEIVER", email_sender)
+
 
 
 # === fastapi app ===
