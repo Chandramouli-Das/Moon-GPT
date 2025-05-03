@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+openai
+streamlit
+faiss-cpu
+numpy
+python-docx
+PyPDF2
+requests
+smtplib
+email-validator

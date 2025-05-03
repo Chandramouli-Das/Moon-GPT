@@ -1,9 +1,0 @@
-openai==0.28.0
-numpy
-faiss-cpu
-python-dotenv
-python-docx
-streamlit
-fastapi 
-uvicorn
-pypdf2
