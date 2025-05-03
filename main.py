@@ -25,12 +25,12 @@ email_receiver   = cfg.get("email_receiver", "chandramoulidas39@gmail.com")
 '''
 
 # === Load from Environment ===
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("openai_api_key")
 pdf_cv_path = "Resume.pdf"
 docx_path = "Document.docx"
-email_sender = os.getenv("EMAIL_SENDER")
-email_password = os.getenv("EMAIL_PASSWORD")
-email_receiver = os.getenv("EMAIL_RECEIVER")
+email_sender = os.getenv("email_sender")
+email_password = os.getenv("email_password")
+email_receiver = os.getenv("email_receiver")
 
 
 # === fastapi app ===
