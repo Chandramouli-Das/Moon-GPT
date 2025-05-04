@@ -69,7 +69,8 @@ with st.sidebar:
         "What are Chandramouli’s key skills?",
         "Tell me about his project experience",
         "What is his current role?",
-        "Write a mail to Chandramouli about a job opening"
+        "Write a mail to my Boss for an Update",
+        "Book an appointment with my Boss",
     ]
     for q in samples:
         st.button(q, key=q, on_click=lambda txt=q: st.session_state.setdefault("queue", []).append(txt))
