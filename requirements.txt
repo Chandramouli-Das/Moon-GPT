@@ -8,3 +8,5 @@ PyPDF2
 requests
 email-validator
 python-dotenv
+streamlit
+pydantic
