@@ -19,12 +19,14 @@ BACKEND_URL = "https://moon-gpt.onrender.com/api/chat"
 import streamlit as st
 from pathlib import Path
 
-PDF_PATH    = Path(st.secrets["PDF_CV_PATH"])
-DOCX_PATH   = Path(st.secrets["DOCX_PATH"])
-BACKEND_URL = st.secrets["BACKEND_URL"]
-EMAIL_SENDER = st.secrets["EMAIL_SENDER"]
-EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
-EMAIL_RECEIVER = st.secrets["EMAIL_RECEIVER"]
+cfg = st.secrets["general"]
+
+PDF_PATH      = Path(cfg["PDF_CV_PATH"])
+DOCX_PATH     = Path(cfg["DOCX_PATH"])
+BACKEND_URL   = cfg["BACKEND_URL"]
+EMAIL_SENDER  = cfg["EMAIL_SENDER"]
+EMAIL_PASSWORD = cfg["EMAIL_PASSWORD"]
+EMAIL_RECEIVER = cfg["EMAIL_RECEIVER"]
 
 # ───────────────────────────────────────────────
 # Global CSS – darker text, card‑like chat, tidy lists
@@ -80,6 +82,7 @@ with st.sidebar:
         "<ol style='font-size:0.85rem;padding-left:1.2rem;line-height:1.4em'>"
         "<li>Ask me to <i>write a mail/email</i> with your name, company & contact.</li>"
         "<li>Review the draft I provide.</li>"
+        "<li>Add Your Email ID and Phone Number as Contact Details.</li>"
         "<li>Reply <b>Ok send it</b> – I'll forward it to <b>chandramoulidas39@gmail.com</b>.</li>"
         "</ol>", unsafe_allow_html=True)
 
