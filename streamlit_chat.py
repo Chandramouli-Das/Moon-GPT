@@ -19,14 +19,13 @@ BACKEND_URL = "https://moon-gpt.onrender.com/api/chat"
 import streamlit as st
 from pathlib import Path
 
-cfg = st.secrets["general"]
 
-PDF_PATH      = Path(cfg["PDF_CV_PATH"])
-DOCX_PATH     = Path(cfg["DOCX_PATH"])
-BACKEND_URL   = cfg["BACKEND_URL"]
-EMAIL_SENDER  = cfg["EMAIL_SENDER"]
-EMAIL_PASSWORD = cfg["EMAIL_PASSWORD"]
-EMAIL_RECEIVER = cfg["EMAIL_RECEIVER"]
+PDF_PATH       = Path(st.secrets["PDF_CV_PATH"])
+DOCX_PATH      = Path(st.secrets["DOCX_PATH"])
+BACKEND_URL    = st.secrets["BACKEND_URL"]
+EMAIL_SENDER   = st.secrets["EMAIL_SENDER"]
+EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
+EMAIL_RECEIVER = st.secrets["EMAIL_RECEIVER"]
 
 # ───────────────────────────────────────────────
 # Global CSS – darker text, card‑like chat, tidy lists
