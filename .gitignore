@@ -55,4 +55,6 @@ moon-gpt-frontend/node_modules/
 moon-gpt-frontend/build/
 *.log
 test.pyc
+config.json.streamlit/secrets.toml
+config.json
 config.json
