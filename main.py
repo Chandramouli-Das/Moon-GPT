@@ -29,12 +29,13 @@ EMAIL_RECEIVER   = cfg["email_receiver"]
 load_dotenv()
 
 # === Config from ENV ===
-openai.api_key   = os.getenv("openai_api_key")
-PDF_PATH         = os.getenv("pdf_cv_path", "Resume.pdf")
-DOCX_PATH        = os.getenv("docx_path",  "Document.docx")
-EMAIL_SENDER     = os.getenv("email_sender")
-EMAIL_PASSWORD   = os.getenv("email_password")
-EMAIL_RECEIVER   = os.getenv("email_receiver", EMAIL_SENDER)
+# Support both lowercase and conventional uppercase env var names.
+openai.api_key   = os.getenv("openai_api_key") or os.getenv("OPENAI_API_KEY")
+PDF_PATH         = os.getenv("pdf_cv_path") or os.getenv("PDF_CV_PATH", "Resume.pdf")
+DOCX_PATH        = os.getenv("docx_path") or os.getenv("DOCX_PATH",  "Document.docx")
+EMAIL_SENDER     = os.getenv("email_sender") or os.getenv("EMAIL_SENDER")
+EMAIL_PASSWORD   = os.getenv("email_password") or os.getenv("EMAIL_PASSWORD")
+EMAIL_RECEIVER   = os.getenv("email_receiver") or os.getenv("EMAIL_RECEIVER", EMAIL_SENDER)
 
 # === FastAPI setup ===
 app = FastAPI()
@@ -113,10 +114,10 @@ def chat(req: ChatRequest):
     uq = user_query.lower()
 
     # Resume download
-    if any(w in uq for w in ("cv","resume")):
-        return FileResponse(PDF_PATH, media_type="application/pdf", filename="Chandramouli_Das_Resume.pdf")
+    if any(w in uq for w in ("cv","resume","download")):
+        return {"answer": "📄 Here is Chandramouli's resume. You can download it using the button below. It includes his skills, experience, and projects."}
 
-    write_mail = ("mail" in uq or "email" in uq) and any(x in uq for x in ("write","draft","compose"))
+    write_mail = ("mail" in uq or "email" in uq or "recruiter" in uq) and any(x in uq for x in ("write","draft","compose","outreach"))
     confirm    = "ok send" in uq or ("send" in uq and any(x in uq for x in ("mail","email","it")))
 
     if write_mail:
