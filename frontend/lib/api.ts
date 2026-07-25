@@ -1,8 +1,7 @@
 import type { ChatAction, Message, Profile } from "./types";
 
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "http://127.0.0.1:8000";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
 export async function getProfile(signal?: AbortSignal): Promise<Profile> {
   const response = await fetch(`${API_URL}/api/profile`, { signal });

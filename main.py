@@ -18,6 +18,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
@@ -743,3 +744,11 @@ def chat(request: ChatRequest) -> ChatResponse:
         answer += "\n\nReview the draft above. When it is ready, reply **“Ok send it”**."
 
     return respond(answer, action)
+
+
+# Keep this mount last so /api routes take precedence over the exported UI.
+# In local development run.py still serves Next.js separately; on Render the
+# build places the static export here and FastAPI serves the complete app.
+FRONTEND_DIST = BASE_DIR / "frontend" / "out"
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")

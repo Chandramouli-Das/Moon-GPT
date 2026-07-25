@@ -128,6 +128,25 @@ cd frontend
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000 npm run dev
 ```
 
+## Single-service production deployment
+
+The production build can serve the Next.js static export from FastAPI, keeping
+the frontend and backend on one Render web service:
+
+```bash
+pip install -r requirements.txt && cd frontend && npm ci && npm run build
+```
+
+Start it with:
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+Do not set `NEXT_PUBLIC_API_URL` for this arrangement; the browser uses
+same-origin `/api` requests. The FastAPI static mount is intentionally registered
+after every API route.
+
 ## Verification
 
 ```bash
