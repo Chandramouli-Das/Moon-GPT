@@ -470,7 +470,6 @@ def profile() -> dict:
             "Agentic AI",
             "RAG Systems",
             "AI Strategy",
-            "LLM fine-tuning",
         ],
         "links": {
             "linkedin": "https://www.linkedin.com/in/chandramouli-das-38a7921a5/",
