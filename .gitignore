@@ -8,6 +8,7 @@ moon-gpt
 
 node_modules/
 frontend/.next/
+frontend/out/
 frontend/.env.local
 .env
 __pycache__/
