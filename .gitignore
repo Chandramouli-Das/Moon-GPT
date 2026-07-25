@@ -7,6 +7,8 @@ moon-gpt
 
 
 node_modules/
+frontend/.next/
+frontend/.env.local
 .env
 __pycache__/
 *.log
@@ -14,12 +16,17 @@ __pycache__/
 # Ignore virtual environment directories
 env/
 venv/
+.venv/
+.venv314/
 Resume/lib/
 Resume/Lib/
 Resume/bin/
 
 # Ignore system-specific files
 .DS_Store
+.cache/
+data/
+Document.pre-structure-backup.docx
 
 # Ignore node_modules for the React frontend
 moon-gpt-frontend/node_modules/
