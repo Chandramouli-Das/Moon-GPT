@@ -19,7 +19,7 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { getProfile, sendChat } from "@/lib/api";
 import type { Message, Profile } from "@/lib/types";
 import { MessageBubble } from "./message-bubble";
@@ -41,6 +41,25 @@ const prompts = [
   { icon: Mail, label: "Write an email", text: "Draft a professional recruiter outreach email to Chandramouli with placeholders for my details." },
 ];
 
+const questionSuggestions = [
+  "What is Chandramouli’s current role and experience?",
+  "What are his projects that best demonstrate Generative AI expertise?",
+  "Which projects best demonstrate his Generative AI expertise?",
+  "Tell me about his recent corporate work at Wipro and Meta.",
+  "How has he used agentic AI in production?",
+  "Explain the People Data Review project and its impact.",
+  "How does the AWB Runbook Automation project work?",
+  "Tell me about the Offer Letter Quality Analysis project.",
+  "What did he build for Axis Max Life?",
+  "Explain the Obituary Lead Generation project.",
+  "What are his strongest data science skills?",
+  "What is his leadership and team-management experience?",
+  "Which roles would be the best fit for him?",
+  "What is his notice period and availability?",
+  "Summarize his career journey and major achievements.",
+  "Draft a professional recruiter outreach email.",
+];
+
 function makeId() {
   return crypto.randomUUID();
 }
@@ -50,7 +69,7 @@ export function ChatExperience() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(true);
   const [mobileProfile, setMobileProfile] = useState(false);
   const [nearBottom, setNearBottom] = useState(true);
   const [unread, setUnread] = useState(false);
@@ -60,6 +79,17 @@ export function ChatExperience() {
   const endRef = useRef<HTMLDivElement>(null);
   const conversationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inlineSuggestion = useMemo(() => {
+    const query = input.trim().toLowerCase();
+    if (query.length < 3 || input.endsWith("\n")) return "";
+    return (
+      questionSuggestions.find(
+        (suggestion) =>
+          suggestion.toLowerCase().startsWith(query)
+          && suggestion.toLowerCase() !== query,
+      ) ?? ""
+    );
+  }, [input]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -68,8 +98,22 @@ export function ChatExperience() {
   }, []);
 
   useEffect(() => {
+    if (window.localStorage.getItem("moongpt-theme") === "light") {
+      setDark(false);
+    }
+  }, []);
+
+  useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
   }, [dark]);
+
+  function toggleTheme() {
+    setDark((current) => {
+      const next = !current;
+      window.localStorage.setItem("moongpt-theme", next ? "dark" : "light");
+      return next;
+    });
+  }
 
   function scrollToLatest(behavior: ScrollBehavior = "smooth") {
     endRef.current?.scrollIntoView({ behavior, block: "end" });
@@ -197,7 +241,7 @@ export function ChatExperience() {
             <button className="new-chat" onClick={reset} title="New conversation">
               <RotateCcw size={17} /><span>New chat</span>
             </button>
-            <button className="icon-action" onClick={() => setDark((value) => !value)} title="Change theme">
+            <button className="icon-action" onClick={toggleTheme} title="Change theme">
               {dark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
             <button className="desktop-collapse icon-action" title="Profile panel"><PanelLeftClose size={18} /></button>
@@ -283,21 +327,38 @@ export function ChatExperience() {
 
         <footer className="composer-wrap">
           <form className="composer" onSubmit={handleSubmit}>
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  void submit();
-                }
-              }}
-              rows={1}
-              placeholder="Ask about experience, projects, leadership, or skills…"
-              aria-label="Message MoonGPT"
-            />
-            <span className="composer-hint">↵</span>
+            <div className="composer-input">
+              {inlineSuggestion && (
+                <div className="inline-suggestion" aria-hidden="true">
+                  <span>{input}</span>
+                  {inlineSuggestion.slice(input.length)}
+                </div>
+              )}
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (
+                    inlineSuggestion
+                    && (event.key === "Tab" || (event.key === "ArrowRight" && event.currentTarget.selectionStart === input.length))
+                  ) {
+                    event.preventDefault();
+                    setInput(inlineSuggestion);
+                    return;
+                  }
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    void submit();
+                  }
+                }}
+                rows={1}
+                placeholder="Ask about experience, projects, leadership, or skills…"
+                aria-label="Message MoonGPT"
+                aria-autocomplete="inline"
+              />
+            </div>
+            <span className="composer-hint">{inlineSuggestion ? "Tab" : "↵"}</span>
             <button disabled={!input.trim() || loading} aria-label="Send message">
               <ArrowUp size={19} />
             </button>

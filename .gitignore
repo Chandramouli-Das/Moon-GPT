@@ -28,6 +28,7 @@ Resume/bin/
 .cache/
 data/
 Document.pre-structure-backup.docx
+Document.before-resume-project-update.docx
 
 # Ignore node_modules for the React frontend
 moon-gpt-frontend/node_modules/

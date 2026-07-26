@@ -320,29 +320,114 @@ a { color: inherit; text-decoration: none; }
   background: color-mix(in srgb, var(--gold) 12%, var(--panel));
 }
 
-.profile-actions { display: grid; gap: 8px; margin-top: 24px; }
-.profile-actions a {
+.profile-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+  padding-bottom: 2px;
+}
+.profile-actions .profile-action {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 9px;
-  min-height: 42px;
-  padding: 0 14px;
+  gap: 11px;
+  min-height: 58px;
+  padding: 9px 11px;
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: 15px;
   color: var(--text-soft);
+  background: var(--panel);
   font-size: 11px;
   font-weight: 680;
-  transition: 160ms ease;
+  box-shadow: 0 10px 28px rgba(23, 27, 52, .055);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
-.profile-actions a:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
-.profile-actions .primary-link {
+.profile-actions .profile-action:hover {
+  border-color: color-mix(in srgb, var(--primary) 48%, var(--line));
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 34px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+.profile-actions .resume-action {
   border-color: transparent;
   color: white;
-  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
-  box-shadow: 0 12px 28px color-mix(in srgb, var(--primary) 19%, transparent);
+  background:
+    radial-gradient(circle at 88% 0, rgba(255,255,255,.2), transparent 34%),
+    linear-gradient(135deg, #6659f5, var(--primary-deep));
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--primary) 25%, transparent);
 }
-.profile-actions a svg:last-child { margin-left: auto; }
+.profile-actions .resume-action:hover {
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--primary) 32%, transparent);
+}
+.profile-actions .appointment-action {
+  border-color: transparent;
+  color: #fff;
+  background:
+    radial-gradient(circle at 88% 0, rgba(255,255,255,.22), transparent 34%),
+    linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow:
+    0 14px 34px rgba(217, 119, 6, .25),
+    inset 0 1px rgba(255, 255, 255, .28);
+}
+[data-theme="dark"] .profile-actions .appointment-action {
+  background:
+    radial-gradient(circle at 88% 0, rgba(255,255,255,.18), transparent 34%),
+    linear-gradient(135deg, #f59e0b, #c96804);
+}
+.profile-actions .appointment-action:hover {
+  border-color: transparent;
+  color: #fff;
+  background:
+    radial-gradient(circle at 88% 0, rgba(255,255,255,.24), transparent 34%),
+    linear-gradient(135deg, #f7aa20, #c96804);
+  box-shadow:
+    0 18px 40px rgba(217, 119, 6, .34),
+    inset 0 1px rgba(255, 255, 255, .3);
+}
+.profile-actions .action-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 11px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+.profile-actions .action-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  text-align: left;
+}
+.profile-actions .action-copy strong {
+  font-size: 11.5px;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+}
+.profile-actions .action-copy small {
+  color: var(--muted);
+  font-size: 8.5px;
+  font-weight: 520;
+  line-height: 1.3;
+}
+.profile-actions .resume-action .action-copy small {
+  color: rgba(255,255,255,.7);
+}
+.profile-actions .appointment-action .action-copy small {
+  color: rgba(255,255,255,.76);
+}
+.profile-actions .action-arrow {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border-radius: 9px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
 
 .social-links {
   display: flex;
@@ -661,7 +746,29 @@ a { color: inherit; text-decoration: none; }
   transition: 160ms ease;
 }
 .composer:focus-within { border-color: color-mix(in srgb, var(--primary) 65%, var(--line)); box-shadow: 0 15px 50px color-mix(in srgb, var(--primary) 10%, transparent); }
+.composer-input {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.inline-suggestion {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 7px 0;
+  color: color-mix(in srgb, var(--muted) 62%, transparent);
+  font-size: 12.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  pointer-events: none;
+}
+.inline-suggestion span { visibility: hidden; }
 .composer textarea {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
   flex: 1;
   max-height: 120px;
   padding: 7px 0;
@@ -702,6 +809,57 @@ a { color: inherit; text-decoration: none; }
 .composer-wrap > p { margin: 8px 0 0; color: var(--muted); text-align: center; font-size: 8.5px; }
 
 .mobile-profile, .mobile-overlay { display: none; }
+
+@media (min-width: 761px) and (max-height: 850px) {
+  .profile-panel {
+    padding-top: 18px;
+    padding-bottom: 16px;
+  }
+  .identity-card {
+    margin-top: 20px;
+    padding: 17px 18px 15px;
+    border-radius: 20px;
+  }
+  .identity-card::after {
+    top: 18px;
+    right: 18px;
+    width: 38px;
+    height: 38px;
+  }
+  .avatar-wrap { margin-bottom: 14px; }
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+  }
+  .avatar-ring { border-radius: 23px; }
+  .identity h1 { font-size: 23px; }
+  .role { margin: 6px 0 8px; line-height: 1.4; }
+  .availability { margin-top: 13px; padding: 8px 10px; }
+  .profile-summary {
+    margin: 15px 0 14px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .stat { padding: 10px 9px; }
+  .stat strong { font-size: 17px; }
+  .skills {
+    margin-top: 14px;
+    padding: 13px 15px;
+    border-radius: 15px;
+  }
+  .skills .section-label { margin-bottom: 6px; }
+  .skill-list { gap: 5px; }
+  .skill-list span { padding: 5px 8px; font-size: 9px; }
+  .profile-actions { gap: 8px; margin-top: 14px; }
+  .profile-actions .profile-action {
+    min-height: 51px;
+    padding: 7px 10px;
+  }
+  .profile-actions .action-icon { width: 32px; height: 32px; }
+  .profile-actions .action-arrow { width: 25px; height: 25px; }
+  .social-links { display: none; }
+}
 
 @media (max-width: 960px) {
   .app-shell { grid-template-columns: 300px minmax(0, 1fr); }

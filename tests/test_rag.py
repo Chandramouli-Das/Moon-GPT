@@ -62,6 +62,40 @@ class HybridRetrievalTests(unittest.TestCase):
             self.assertIn("60 days", combined)
             self.assertIn("30 days", combined)
 
+    def test_phone_query_returns_verified_contact_information(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            engine = RAGEngine(
+                document_path=DOCUMENT,
+                embedding_model="test-embedding",
+                embedder=deterministic_embedder,
+                cache_dir=Path(temporary_directory),
+            )
+            results = engine.search("What is his phone number?", count=5)
+            combined = " ".join(result.chunk.text.lower() for result in results)
+            self.assertIn("9674078742", combined.replace(" ", ""))
+            self.assertEqual(
+                results[0].chunk.section,
+                "Contact & Professional Links",
+            )
+
+    def test_phone_follow_up_keeps_contact_context(self) -> None:
+        conversation = [
+            ("user", "What is his phone number?"),
+            ("assistant", "It is not specified."),
+            ("user", "It is present, take another look."),
+        ]
+        query = build_retrieval_query(conversation[-1][1], conversation)
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            engine = RAGEngine(
+                DOCUMENT,
+                "test-embedding",
+                deterministic_embedder,
+                Path(temporary_directory),
+            )
+            results = engine.search(query, count=5)
+            combined = " ".join(result.chunk.text for result in results)
+            self.assertIn("9674078742", combined.replace(" ", ""))
+
     def test_index_is_reused_from_cache(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             cache = Path(temporary_directory)

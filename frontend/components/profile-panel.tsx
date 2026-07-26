@@ -3,8 +3,8 @@
 import Image from "next/image";
 import {
   ArrowUpRight,
-  CalendarDays,
-  Download,
+  CalendarCheck2,
+  FileDown,
   Github,
   Linkedin,
   MapPin,
@@ -22,7 +22,7 @@ const fallback: Profile = {
   summary:
     "AI/ML leader building production-grade Generative AI, RAG, NLP, and intelligent automation systems.",
   highlights: [
-    { value: "6+", label: "Years in AI & Data" },
+    { value: "7+", label: "Years in AI & Data" },
     { value: "10+", label: "Team members led" },
     { value: "1K+", label: "Learners mentored" },
   ],
@@ -98,11 +98,26 @@ export function ProfilePanel({ profile }: { profile: Profile | null }) {
       </div>
 
       <div className="profile-actions">
-        <a className="primary-link" href={`${API_URL}/api/resume`}>
-          <Download size={17} /> Download résumé
+        <a className="profile-action resume-action" href={`${API_URL}/api/resume`}>
+          <span className="action-icon"><FileDown size={19} /></span>
+          <span className="action-copy">
+            <strong>Download résumé</strong>
+            <small>View career profile · PDF</small>
+          </span>
+          <span className="action-arrow" aria-hidden="true"><ArrowUpRight size={16} /></span>
         </a>
-        <a href={data.links.appointment} target="_blank" rel="noreferrer">
-          <CalendarDays size={17} /> Book a conversation <ArrowUpRight size={15} />
+        <a
+          className="profile-action appointment-action"
+          href={data.links.appointment}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span className="action-icon"><CalendarCheck2 size={19} /></span>
+          <span className="action-copy">
+            <strong>Book an Appointment</strong>
+            <small>Choose a convenient time</small>
+          </span>
+          <span className="action-arrow" aria-hidden="true"><ArrowUpRight size={16} /></span>
         </a>
       </div>
 

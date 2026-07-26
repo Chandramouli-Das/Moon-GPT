@@ -216,7 +216,7 @@ def build_document(source: list[str]) -> Document:
         ("Experience", "Over 7 years across Data Science, Generative AI, AI/ML architecture, and automation"),
         ("Notice period", "Officially 60 days; negotiable to 30 days"),
         ("Core expertise", "Generative AI, Data Science, AI Leadership, Agentic AI, RAG systems, NLP, and intelligent document automation"),
-        ("Leadership", "Led cross-functional teams of 10+ members"),
+        ("Leadership", "Directly led teams at Gramener/Straive and Proxima; contributes to delivery leadership and technical direction at Wipro"),
         ("Mentoring", "Mentored 1,000+ learners across multiple platforms"),
         ("Appointment", "https://topmate.io/chandramouli_das"),
     ]
@@ -252,7 +252,7 @@ def build_document(source: list[str]) -> Document:
         ("What is his notice period?", "The official notice period is 60 days and is negotiable to 30 days."),
         ("Which roles best match his background?", "Lead Data Scientist, Generative AI Lead, AI/ML Solution Architect, Data Science leadership, and senior roles involving agentic AI, RAG, NLP, or intelligent automation."),
         ("What are his strongest technical areas?", "Generative AI, LLM application design, retrieval-augmented generation, LangGraph agentic workflows, text-to-SQL, OCR and document intelligence, NLP, predictive modeling, FastAPI, vector databases, and cloud-based AI delivery."),
-        ("Has he led teams?", "Yes. He has led cross-functional teams of 10+ members and managed delivery from requirements and proof-of-concept through testing and deployment."),
+        ("Has he led teams?", "Yes. At Gramener/Straive, he directly led a five-member Generative AI delivery team. At Proxima Systems, he led a cross-functional AI/ML team through the full delivery lifecycle. At Wipro, he contributes as part of the leadership group for Meta-focused GenAI initiatives through technical direction, architecture ownership, prioritization, and stakeholder alignment, without direct people-management responsibility. He has also led larger delivery and roadmap activities involving 10+ members earlier in his career."),
         ("Which projects best demonstrate his experience?", "Notable work includes an agentic SQL chatbot for Axis Max Life, an OCR and GenAI legal-document pipeline for LexisNexis-related risk workflows, Logitech Sherlock text-to-SQL prompt enhancement, HR document assistants, and financial-risk prediction products at HighRadius."),
         ("Which industries has he worked in?", "Financial technology, insurance, HR technology, legal and risk, enterprise automation, education, and research."),
         ("What is his education?", "M.Tech in Data Science from KIIT with a 9.01 CGPA, a postgraduate certification in Machine Learning and Deep Learning from IIIT Bangalore, and a B.Tech in Computer Science and Engineering."),
@@ -269,6 +269,16 @@ def build_document(source: list[str]) -> Document:
         add_question(document, question, answer)
 
     add_experience(document, source[28:60])
+    document.add_heading("Leadership Profile", level=1)
+    leadership_profile = [
+        "Leadership experience spans Proxima Systems, Gramener/Straive, and Wipro, combining direct team management with technical leadership, delivery ownership, stakeholder influence, and hands-on AI architecture.",
+        "At Gramener/Straive, led a five-member team delivering Generative AI solutions, coordinating priorities, solution design, execution, client communication, and end-to-end delivery.",
+        "At Proxima Systems, led a cross-functional AI/ML team through requirements, architecture, development, mentoring, deployment, and enterprise integration.",
+        "At Wipro, contributes as part of the leadership group for Meta-focused GenAI initiatives. Although the role does not include direct people management, it involves technical direction, architecture ownership, use-case prioritization, stakeholder alignment, and influencing delivery decisions across product and engineering teams.",
+        "Leadership strengths include translating business problems into AI roadmaps, creating clarity across cross-functional teams, balancing hands-on engineering with delivery governance, mentoring practitioners, and communicating effectively with clients and senior stakeholders.",
+    ]
+    for statement in leadership_profile:
+        add_bullet(document, statement)
     add_projects(document, source[60:76])
     add_section_from_range(document, "Leadership, Volunteering & Training", source[76:85], {"Volunteer Work -"})
     add_section_from_range(document, "Education, Research & Publications", source[85:112], {"Education -"})

@@ -34,6 +34,9 @@ QUERY_ALIASES = {
     "genai": ("generative ai", "llm", "rag", "agentic ai"),
     "projects": ("project portfolio", "business impact", "production"),
     "experience": ("professional experience", "career timeline"),
+    "phone": ("mobile contact phone number call WhatsApp",),
+    "mobile": ("phone number contact call WhatsApp",),
+    "contact": ("mobile phone number appointment LinkedIn",),
 }
 WORK_QUERY_PATTERN = re.compile(
     r"\b(work|career|experience|employment|job|role|company|corporate|projects?)\b",
@@ -41,6 +44,10 @@ WORK_QUERY_PATTERN = re.compile(
 )
 FREELANCE_QUERY_PATTERN = re.compile(
     r"\b(freelanc\w*|independent consulting|side projects?|personal projects?)\b",
+    re.IGNORECASE,
+)
+CONTACT_QUERY_PATTERN = re.compile(
+    r"\b(phone|mobile|contact|call|whatsapp|reach him|reach chandramouli)\b",
     re.IGNORECASE,
 )
 
@@ -324,6 +331,7 @@ class RAGEngine:
         prefer_corporate = bool(WORK_QUERY_PATTERN.search(query)) and not bool(
             FREELANCE_QUERY_PATTERN.search(query)
         )
+        prefer_contact = bool(CONTACT_QUERY_PATTERN.search(query))
 
         ranked = sorted(
             (
@@ -345,6 +353,13 @@ class RAGEngine:
                         if prefer_corporate
                         and self._chunks[position].section
                         == "Personal AI & Data Projects"
+                        else 0.0
+                    )
+                    + (
+                        0.65
+                        if prefer_contact
+                        and self._chunks[position].section
+                        in {"Contact & Professional Links", "Recruiter Quick Reference"}
                         else 0.0
                     ),
                     dense_score=dense_by_position.get(position, 0.0),
