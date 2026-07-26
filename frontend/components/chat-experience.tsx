@@ -98,21 +98,11 @@ export function ChatExperience() {
   }, []);
 
   useEffect(() => {
-    if (window.localStorage.getItem("moongpt-theme") === "light") {
-      setDark(false);
-    }
-  }, []);
-
-  useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
   }, [dark]);
 
   function toggleTheme() {
-    setDark((current) => {
-      const next = !current;
-      window.localStorage.setItem("moongpt-theme", next ? "dark" : "light");
-      return next;
-    });
+    setDark((current) => !current);
   }
 
   function scrollToLatest(behavior: ScrollBehavior = "smooth") {
