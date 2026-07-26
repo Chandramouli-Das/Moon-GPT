@@ -23,6 +23,7 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 
 from backend.analytics import QuestionAnalytics
+from backend.contact import extract_verified_phone, is_phone_request
 from backend.rag import RAGEngine, SearchResult, build_retrieval_query
 
 load_dotenv()
@@ -552,6 +553,19 @@ def chat(request: ChatRequest) -> ChatResponse:
         if question_analytics is not None:
             question_analytics.record(request.session_id, user_query, answer)
         return ChatResponse(answer=answer, action=action)
+
+    conversation_pairs = [
+        (message.role, message.content) for message in request.conversation
+    ]
+    if is_phone_request(user_query, conversation_pairs):
+        verified_phone = extract_verified_phone(DOCX_PATH)
+        if verified_phone:
+            return respond(
+                (
+                    "Chandramouli’s verified phone number is "
+                    f"**{verified_phone}**. It can be used for calls or WhatsApp."
+                )
+            )
 
     if wants_resume(user_query):
         return respond(
